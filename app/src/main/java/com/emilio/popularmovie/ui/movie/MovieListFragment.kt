@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -51,17 +50,18 @@ class MovieListFragment : Fragment() {
         searchBar = toolbar?.menu?.findItem(R.id.searcher)?.actionView as SearchView
 
         viewModel.setUpSession(activity)
+        viewModel.getMovies()
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.getMovies()
-        }
+        setEventListener()
+        setObservers()
 
+    }
+
+    private fun setEventListener() {
         searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(text: String?): Boolean {
                 text?.let {
-                    lifecycleScope.launch {
-                        viewModel.searchMovie(it)
-                    }
+                    viewModel.searchMovie(it)
                 }
                 return true
             }
@@ -72,11 +72,15 @@ class MovieListFragment : Fragment() {
                 }
                 return true
             }
-
         })
 
-        setObservers()
+        binding.previousPage.setOnClickListener {
+            viewModel.previousPage()
+        }
 
+        binding.nextPage.setOnClickListener {
+            viewModel.nextPage()
+        }
     }
 
     private fun setObservers() {
@@ -94,21 +98,13 @@ class MovieListFragment : Fragment() {
                 when(typeClick) {
                     TypeClick.FAVORITE ->  {
                         val v = view as AppCompatImageView
-
-                        activity?.applicationContext?.let { context ->
-                            v.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_liked))
-                            lifecycleScope.launch {
-                                viewModel.addToFavorite(pos)
-                            }
-                        }
+                        markFavorite(v, pos)
                     }
                     TypeClick.NONE -> {
 
                     }
                     null -> {
-                        lifecycleScope.launch {
-                            viewModel.getMoviesDetail(pos)
-                        }
+                        viewModel.getMoviesDetail(pos)
                     }
                 }
             }
@@ -120,5 +116,12 @@ class MovieListFragment : Fragment() {
             layoutManager = GridLayoutManager(activity, 3)
             adapter = movieAdapter
         }
+    }
+
+    private fun markFavorite(v: AppCompatImageView, pos: Int) {
+        activity?.applicationContext?.let { context ->
+            v.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_liked))
+        }
+        viewModel.addToFavorite(pos)
     }
 }
