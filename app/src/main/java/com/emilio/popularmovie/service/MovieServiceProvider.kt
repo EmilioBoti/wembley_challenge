@@ -9,6 +9,7 @@ import com.emilio.popularmovie.network.auth.RequestToken
 import com.emilio.popularmovie.network.auth.Token
 import com.emilio.popularmovie.network.auth.User
 import com.emilio.popularmovie.network.auth.SessionStatus
+import com.emilio.popularmovie.network.auth.SessionLogout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -131,6 +132,17 @@ class MovieServiceProvider(private val retrofit: Retrofit): IRepository {
                 } else {
                     null
                 }
+            }catch (e: Exception) {
+                Log.e(TAG, e.cause?.message?: "network Error")
+                null
+            }
+        }
+    }
+
+    override suspend fun logoutSession(body: SessionLogout, params: HashMap<String, String>): SessionLogout? {
+        return withContext(Dispatchers.IO) {
+            try {
+                retrofit.create(ApiEndPoint::class.java).logoutSessionService(body, params)
             }catch (e: Exception) {
                 Log.e(TAG, e.cause?.message?: "network Error")
                 null
