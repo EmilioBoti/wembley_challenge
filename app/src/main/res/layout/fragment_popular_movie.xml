@@ -1,14 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.movie.MovieListFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/moviesContainer"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/moviesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/moviesContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingVertical="@dimen/dimen_20"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/previousPage"
+                android:layout_width="160dp"
+                android:layout_height="@dimen/dimen_25"
+                android:text="@string/previous"
+                android:drawableStart="@drawable/ic_navigate_before_24"
+                android:background="@drawable/btn_corner_nav_pages"
+                android:paddingHorizontal="@dimen/dimen_30"
+                android:gravity="center"
+                />
+            <View
+                android:layout_width="@dimen/dimen_60"
+                android:layout_height="wrap_content"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/nextPage"
+                android:layout_width="160dp"
+                android:layout_height="@dimen/dimen_25"
+                android:text="@string/next"
+                android:drawableEnd="@drawable/ic_navigate_next_24"
+                android:background="@drawable/btn_corner_nav_pages"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/dimen_30"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
