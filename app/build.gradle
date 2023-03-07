@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def apikeyProperties = new Properties()
+apikeyProperties.load(rootProject.file("local.properties").newDataInputStream())
+
 android {
     namespace 'com.emilio.popularmovie'
     compileSdk 33
@@ -15,6 +18,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "SECRET_APIKEY", apikeyProperties.getProperty("SECRET_APIKEY"))
     }
 
     buildTypes {
