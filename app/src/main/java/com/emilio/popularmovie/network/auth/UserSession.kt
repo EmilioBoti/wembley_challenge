@@ -17,6 +17,12 @@ object UserSession {
         ?.apply()
     }
 
+    fun logoutSession(context: Context?) {
+        context?.getSharedPreferences(context.getString(R.string.user_session), Context.MODE_PRIVATE)?.edit()
+            ?.clear()
+            ?.apply()
+    }
+
     fun getSession(context: Context?): MutableMap<String, *>? {
         return context?.getSharedPreferences(context.getString(R.string.user_session), Context.MODE_PRIVATE)?.all
     }

@@ -2,7 +2,9 @@ package com.emilio.popularmovie.network.auth
 
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.QueryMap
@@ -22,6 +24,10 @@ interface AuthEndPoint {
     @Headers("Content-type: application/json")
     @POST("3/authentication/session/new")
     suspend fun createSessionService(@Body body: Token, @QueryMap params: HashMap<String, String>): SessionStatus
+
+    @Headers("Content-type: application/json")
+    @HTTP(method = "DELETE", path = "3/authentication/session", hasBody = true)
+    suspend fun logoutSessionService(@Body body: SessionLogout, @QueryMap params: HashMap<String, String>): SessionLogout
 
 
 }
