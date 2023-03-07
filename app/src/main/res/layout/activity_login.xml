@@ -5,7 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.LoginActivity">
+    tools:context=".ui.LoginActivity"
+    >
 
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -21,6 +22,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title"
+            android:textSize="@dimen/dimenSt_40"
+            android:textColor="@color/main_color"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/dimen_30"
+            />
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputContainer"
             android:layout_width="match_parent"
@@ -39,6 +49,8 @@
                 android:id="@+id/inputUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -47,7 +59,7 @@
             android:id="@+id/inputContainers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dimen_20"
+            android:layout_marginBottom="@dimen/dimen_40"
             app:boxCornerRadiusBottomEnd="@dimen/dimen_3"
             app:boxCornerRadiusBottomStart="@dimen/dimen_3"
             app:boxCornerRadiusTopEnd="@dimen/dimen_3"
@@ -62,6 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
+                android:background="@android:color/transparent"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -71,11 +84,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dimen_40"
-            android:layout_marginBottom="@dimen/dimen_30"
             android:text="@string/login"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:background="@color/main_color"
+            android:background="@drawable/btn_corner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

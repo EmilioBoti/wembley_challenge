@@ -7,51 +7,67 @@ import androidx.lifecycle.viewModelScope
 import com.emilio.popularmovie.domain.movieList.ISession
 import com.emilio.popularmovie.network.auth.*
 import com.emilio.popularmovie.service.IRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginViewModel(private val repository: IRepository): ViewModel(), AuthUseCase, ISession {
-    var login: MutableLiveData<Boolean> = MutableLiveData()
+    var login: MutableLiveData<LoginValidation> = MutableLiveData()
     private var session: MutableMap<String, *>? = null
 
 
     override fun requestToken(context: Context?, username: String, password: String) {
+        val params = getApiKeyParam()
 
         viewModelScope.launch {
-            val token: RequestToken? = async {
-                repository.createToken(getApiKeyParam())
-            }.await()
 
-            val req: RequestToken? = async {
-                token?.request_token?.let {
-                    validateTokenWithLogin(User(username, password, it))
-                }
-            }.await()
+            val token: RequestToken? = getRequestedToken()
 
-            req?.request_token?.let {
-                val session = async {
-                    token?.request_token?.let {
-                        createSession(Token(it), getApiKeyParam())
-                    }
-                }.await()
-
-                session?.let {
-                    val params = getApiKeyParam().apply {
-                        put("session_id", it.session_id)
-                    }
-                    val account = getAccount(params)
-                    account?.id?.let { accountId ->
-                        UserSession.saveSession(context, it.session_id, accountId, username)
-                        login.postValue(it.success)
-                    }
-                }
+            val validToken: RequestToken? = token?.request_token?.let {
+                validateToken(User(username, password, it))
             }
+
+            val sessionStatus = validToken?.let {
+                getSession(it.request_token)
+            }
+
+            sessionStatus?.let { sessionStatus ->
+                params["session_id"] = sessionStatus.session_id
+
+                val account = getAccount(params)
+                session?.let {
+                    account?.id?.let { accountId ->
+                        UserSession.saveSession(context, sessionStatus.session_id, accountId, username)
+                        login.postValue(LoginValidation.SUCCESS)
+                    }
+                }
+
+            } ?: login.postValue(LoginValidation.FAIL)
+
         }
 
     }
 
+    private suspend fun getSession(requestToken: String): SessionStatus? {
+        return withContext(Dispatchers.Default) {
+            createSession(Token(requestToken), getApiKeyParam())
+        }
+    }
+    private suspend fun getRequestedToken() : RequestToken? {
+        val token: RequestToken? = withContext(Dispatchers.Default) {
+            repository.createToken(getApiKeyParam())
+        }
+        return token
+    }
+
     suspend fun getAccount(params: HashMap<String, String>): Account? {
         return repository.accountService(params)
+    }
+    private suspend fun validateToken(user: User): RequestToken? {
+        return withContext(Dispatchers.Default) {
+            validateTokenWithLogin(user)
+        }
     }
 
     override suspend fun validateTokenWithLogin(user: User?): RequestToken? {
@@ -64,15 +80,13 @@ class LoginViewModel(private val repository: IRepository): ViewModel(), AuthUseC
         return repository.createSessionService(token, params)
     }
 
-    private fun getApiKeyParam(): HashMap<String, String> = HashMap<String, String>().apply {
-        put("api_key", "f4d9eef562ddac8945db4d955d7a86c5")
-    }
+    private fun getApiKeyParam(): HashMap<String, String> = UserSession.getApiKeyParam()
 
     override fun setUpSession(context: Context?) {
         session = UserSession.getSession(context)
 
         if (isLogin()) {
-            login.postValue(true)
+            login.postValue(LoginValidation.SUCCESS)
         }
     }
 

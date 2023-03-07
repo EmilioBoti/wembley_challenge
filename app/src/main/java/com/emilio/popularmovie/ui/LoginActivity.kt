@@ -3,9 +3,11 @@ package com.emilio.popularmovie.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.emilio.popularmovie.databinding.ActivityLoginBinding
+import com.emilio.popularmovie.domain.login.LoginValidation
 import com.emilio.popularmovie.domain.login.LoginViewModel
 import com.emilio.popularmovie.domain.movieList.ViewModelFactory
 import com.emilio.popularmovie.domain.movieList.ViewModelType
@@ -29,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
 
         viewModelFactory = ViewModelFactory(MovieServiceProvider(RetrofitBuilder.getInstance()), ViewModelType.LOGIN)
         loginViewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
-
         loginViewModel.setUpSession(this)
 
         setUpEventListeners()
@@ -38,7 +39,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setUpObservers() {
         loginViewModel.login.observe(this) {
-            navigateTo()
+            when(it) {
+                LoginValidation.SUCCESS -> navigateTo()
+                LoginValidation.FAIL -> Toast.makeText(this, "Your username or Password might be incorrect.", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
