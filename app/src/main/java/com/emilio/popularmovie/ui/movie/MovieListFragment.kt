@@ -6,11 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.emilio.popularmovie.R
 import com.emilio.popularmovie.common.OnSelectItem
@@ -19,11 +16,11 @@ import com.emilio.popularmovie.databinding.FragmentPopularMovieBinding
 import com.emilio.popularmovie.domain.movieList.ViewModelFactory
 import com.emilio.popularmovie.domain.movieList.MovieListViewModel
 import com.emilio.popularmovie.domain.movieList.ViewModelType
+import com.emilio.popularmovie.model.FavMovie
 import com.emilio.popularmovie.model.Movie
 import com.emilio.popularmovie.network.RetrofitBuilder
 import com.emilio.popularmovie.service.MovieServiceProvider
 import com.google.android.material.appbar.MaterialToolbar
-import kotlinx.coroutines.launch
 
 
 class MovieListFragment : Fragment() {
@@ -94,19 +91,8 @@ class MovieListFragment : Fragment() {
         val movieAdapter: MovieAdapter = MovieAdapter(listMovies)
         movieAdapter.setOnSelectListener(object : OnSelectItem {
 
-            override fun onSelect(view: View, pos: Int, typeClick: TypeClick?) {
-                when(typeClick) {
-                    TypeClick.FAVORITE ->  {
-                        val v = view as AppCompatImageView
-                        markFavorite(v, pos)
-                    }
-                    TypeClick.NONE -> {
-
-                    }
-                    null -> {
-                        viewModel.getMoviesDetail(pos)
-                    }
-                }
+            override fun onSelect(view: View, pos: Int, typeClick: TypeClick) {
+                viewModel.itemSelected(pos, typeClick)
             }
 
         })
@@ -118,10 +104,4 @@ class MovieListFragment : Fragment() {
         }
     }
 
-    private fun markFavorite(v: AppCompatImageView, pos: Int) {
-        activity?.applicationContext?.let { context ->
-            v.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_liked))
-        }
-        viewModel.addToFavorite(pos)
-    }
 }

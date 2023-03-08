@@ -5,12 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emilio.popularmovie.common.TypeClick
+import com.emilio.popularmovie.model.FavMovie
 import com.emilio.popularmovie.model.FavoriteBody
 import com.emilio.popularmovie.model.Movie
 import com.emilio.popularmovie.model.Page
 import com.emilio.popularmovie.network.auth.UserSession
 import com.emilio.popularmovie.service.IRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MovieListViewModel(private val repository: IRepository): ViewModel(), IMovie, ISession {
     private var _listMovies: MutableLiveData<MutableList<Movie>> = MutableLiveData()
@@ -34,25 +39,31 @@ class MovieListViewModel(private val repository: IRepository): ViewModel(), IMov
 
     }
 
-    override fun getMoviesDetail(pos: Int) {
-        val movie = listMovies.value?.get(pos)
+    override fun getMoviesDetail(movie: Movie?) {
+
     }
 
-    override fun addToFavorite(pos: Int) {
+    override fun addToFavorite(pos: Int, typeClick: TypeClick) {
         val movie = listMovies.value?.get(pos)
+        when(typeClick) {
+            TypeClick.NONE -> { getMoviesDetail(movie) }
+            TypeClick.FAVORITE -> { markFavorite(movie, true) }
+            TypeClick.NOT_FAVORITE -> { markFavorite(movie, false)}
+        }
+    }
 
+    private fun markFavorite(movie: Movie?, isFavorite: Boolean) {
         session?.let {
             viewModelScope.launch {
                 val params = UserSession.getApiKeyParam().apply {
                     put("session_id", it[UserSession.SESSION_ID] as String)
                 }
                 movie?.id?.let { movieId ->
-                    addAndRemoveToFavorite(it[UserSession.ACCOUNT_ID] as Int, FavoriteBody("movie", movieId, true), params)
+                    addAndRemoveToFavorite(it[UserSession.ACCOUNT_ID] as Int, FavoriteBody("movie", movieId, isFavorite), params)
                 }
             }
         }
     }
-
     private suspend fun addAndRemoveToFavorite(accountId: Int, favBody: FavoriteBody, params: HashMap<String, String>) {
         repository.markFavoriteService(accountId, favBody, params)
     }
@@ -102,6 +113,10 @@ class MovieListViewModel(private val repository: IRepository): ViewModel(), IMov
                 getMovies(page)
             }
         }
+    }
+
+    fun itemSelected(pos: Int, typeClick: TypeClick) {
+        addToFavorite(pos, typeClick)
     }
 
 }

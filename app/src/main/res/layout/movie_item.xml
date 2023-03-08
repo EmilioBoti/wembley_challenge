@@ -43,18 +43,35 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/addFavorite"
+                app:layout_constraintEnd_toStartOf="@+id/iconFavContainer"
                 />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/addFavorite"
+            <RelativeLayout
+                android:id="@+id/iconFavContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_star"
-                app:tint="#FFD166"
-                />
+                >
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/liked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_star"
+                    app:tint="#FFD166"
+                    android:visibility="visible"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/unliked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_star_liked"
+                    app:tint="#FFD166"
+                    android:visibility="gone"
+                    />
+
+            </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

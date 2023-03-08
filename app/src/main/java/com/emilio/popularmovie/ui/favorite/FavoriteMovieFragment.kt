@@ -5,26 +5,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.emilio.popularmovie.R
 import com.emilio.popularmovie.common.OnSelectItem
 import com.emilio.popularmovie.common.TypeClick
 import com.emilio.popularmovie.databinding.FragmentFavoriteMovieBinding
 import com.emilio.popularmovie.domain.favorite.FavoriteViewModel
-import com.emilio.popularmovie.domain.login.LoginViewModel
 import com.emilio.popularmovie.domain.movieList.ViewModelFactory
 import com.emilio.popularmovie.domain.movieList.ViewModelType
+import com.emilio.popularmovie.model.FavMovie
 import com.emilio.popularmovie.model.Movie
 import com.emilio.popularmovie.network.RetrofitBuilder
 import com.emilio.popularmovie.service.MovieServiceProvider
 import com.emilio.popularmovie.ui.movie.MovieAdapter
-import kotlinx.coroutines.launch
 
 
 class FavoriteMovieFragment : Fragment() {
@@ -64,18 +59,8 @@ class FavoriteMovieFragment : Fragment() {
         val movieAdapter: MovieAdapter = MovieAdapter(listMovies)
         movieAdapter.setOnSelectListener(object : OnSelectItem {
 
-            override fun onSelect(view: View, pos: Int, typeClick: TypeClick?) {
-                when(typeClick) {
-                    TypeClick.FAVORITE ->  {
-                        val v = view as AppCompatImageView
-                    }
-                    TypeClick.NONE -> {
+            override fun onSelect(view: View, pos: Int, typeClick: TypeClick) {
 
-                    }
-                    null -> {
-
-                    }
-                }
             }
 
         })
